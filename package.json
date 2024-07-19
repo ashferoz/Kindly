@@ -1,0 +1,36 @@
+{
+  "name": "kindly_backend",
+  "version": "1.0.0",
+  "description": "An app to connect with volunteers and lend a hand in your community.",
+  "main": "server.ts",
+  "scripts": {
+    "build": "rimraf dist && npx tsc",
+    "prestart": "npm run build",
+    "start": "node dist/server.js",
+    "preserve": "npm run build",
+    "serve": "concurrently \"tsc -w\" \"nodemon dist/server.js\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "concurrently": "^8.2.2",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "express-rate-limit": "^7.3.1",
+    "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.12.0",
+    "rimraf": "^6.0.1",
+    "uuid": "^10.0.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.14.11",
+    "dotenv": "^16.4.5",
+    "express-validator": "^7.1.0",
+    "nodemon": "^3.1.4",
+    "typescript": "^5.5.3"
+  }
+}
