@@ -111,7 +111,7 @@ details 			TEXT,
 request_type 		INT NOT NULL,
 request_urgency 	INT NOT NULL,
 request_location 	INT NOT NULL,
-request_status 		INT DEFAULT 1,
+request_status 		INT NOT NULL DEFAULT 1,
 date_created 		TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 FOREIGN KEY (beneficiary_uuid) 	REFERENCES beneficiaries(uuid),
 FOREIGN KEY (request_type) 		REFERENCES donations_type(id),
@@ -125,4 +125,31 @@ VALUES ('a5d990ec-c298-49e1-8d0b-a51e1dfae61d', 'Need jellyfish net.', 'I cannot
 
 
 SELECT * FROM requests;
+
+
+-- Connect Volunteer to Beneficiary request
+CREATE TABLE connect_users (
+request_status 		INT NOT NULL DEFAULT 1,
+date_connected		TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+volunteer_uuid 		UUID NOT NULL,
+connect_request_id	INT NOT NULL,
+PRIMARY KEY			(volunteer_uuid, connect_request_id),
+message_id			INT NOT NULL,
+FOREIGN KEY (connect_request_id) 	REFERENCES requests(request_id),
+FOREIGN KEY (volunteer_uuid) 		REFERENCES volunteers(uuid),
+FOREIGN KEY (message_id) 			REFERENCES messages(id)
+);
+
+
+
+-- Messages
+CREATE TABLE messages (
+id					SERIAL PRIMARY KEY,
+content				TEXT,
+date_created		TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+volunteer_uuid 		UUID NOT NULL,
+beneficiary_uuid 	UUID NOT NULL,
+FOREIGN KEY (volunteer_uuid) 		REFERENCES volunteers(uuid),
+FOREIGN KEY (beneficiary_uuid) 		REFERENCES beneficiaries(uuid)
+);
 
