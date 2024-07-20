@@ -1,11 +1,11 @@
 require("dotenv").config();
 
 import express, { Express, Request, Response } from "express";
-const cors = require("cors");
-const helmet = require("helmet");
-const ratelimit = require("express-rate-limit");
+import cors from "cors";
+import helmet from "helmet";
+import rateLimit from "express-rate-limit";
 
-const limiter = ratelimit({
+const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
   standardHeaders: true,
