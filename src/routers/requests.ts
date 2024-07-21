@@ -1,10 +1,10 @@
 import express from "express";
-import  getAllRequests from '../controllers/requests'
+import requestsController from '../controllers/requests';
 
 const router = express.Router()
 
 
-router.get('/requests', getAllRequests)
+router.get('/requests', requestsController.getAllRequests)
 
 
 export default router;

@@ -17,4 +17,8 @@ const getAllRequests = async function findAll(
   }
 };
 
-export default getAllRequests;
+
+
+export default {
+  getAllRequests
+};
