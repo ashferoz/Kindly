@@ -1,24 +1,22 @@
-import { Response, Request, NextFunction } from "express";
+import { Response, Request } from "express";
 import connectDB from "../db/db";
 
-const getAllRequests = async function findAll(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
-  const client = connectDB;
+const getAllRequests = async (req: Request, res: Response) => {
   try {
-    const result = await client.query("SELECT * FROM requests");
-    const requests = result.rows;
-
-    res.json(requests);
+    const allResults = await connectDB.query("SELECT * FROM requests");
+    res.json(allResults.rows);
   } catch (error) {
-    next(error);
+    if (error instanceof Error) {
+      console.error(error.message);
+      res
+        .status(400)
+        .json({ status: "error", msg: "error getting all requests" });
+    } else {
+      console.error("An unexpected error occurred:", error);
+    }
   }
 };
 
-
-
 export default {
-  getAllRequests
+  getAllRequests,
 };
