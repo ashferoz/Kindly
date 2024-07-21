@@ -8,4 +8,6 @@ router.get('/requests', requestsController.getAllRequests)
 
 router.get('/requests/id', requestsController.getRequestsByBeneficiary)
 
+router.put('/requests', requestsController.addRequest)
+
 export default router;
