@@ -124,32 +124,62 @@ INSERT INTO requests (beneficiary_uuid, title, details, request_type, request_ur
 VALUES ('a5d990ec-c298-49e1-8d0b-a51e1dfae61d', 'Need jellyfish net.', 'I cannot afford a new net', 3, 2, 1);
 
 
+
 SELECT * FROM requests;
+
 
 
 -- Connect Volunteer to Beneficiary request
 CREATE TABLE connect_users (
-request_status 		INT NOT NULL DEFAULT 1,
-date_connected		TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-volunteer_uuid 		UUID NOT NULL,
-connect_request_id	INT NOT NULL,
-PRIMARY KEY			(volunteer_uuid, connect_request_id),
-message_id			INT NOT NULL,
+connection_id      		SERIAL PRIMARY KEY,
+request_status     		INT NOT NULL DEFAULT 1,
+date_connected     		TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+volunteer_uuid     		UUID NOT NULL,
+connect_request_id 		INT NOT NULL,
 FOREIGN KEY (connect_request_id) 	REFERENCES requests(request_id),
-FOREIGN KEY (volunteer_uuid) 		REFERENCES volunteers(uuid),
-FOREIGN KEY (message_id) 			REFERENCES messages(id)
+FOREIGN KEY (volunteer_uuid) 		REFERENCES volunteers(uuid)
 );
+
 
 
 
 -- Messages
 CREATE TABLE messages (
-id					SERIAL PRIMARY KEY,
-content				TEXT,
-date_created		TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-volunteer_uuid 		UUID NOT NULL,
-beneficiary_uuid 	UUID NOT NULL,
-FOREIGN KEY (volunteer_uuid) 		REFERENCES volunteers(uuid),
-FOREIGN KEY (beneficiary_uuid) 		REFERENCES beneficiaries(uuid)
+id                	SERIAL PRIMARY KEY,
+content           	TEXT,
+date_created      	TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+volunteer_uuid    	UUID NOT NULL,
+beneficiary_uuid  	UUID NOT NULL,
+connection_id     	INT NOT NULL,
+FOREIGN KEY (volunteer_uuid) 	REFERENCES volunteers(uuid),
+FOREIGN KEY (beneficiary_uuid) 	REFERENCES beneficiaries(uuid),
+FOREIGN KEY (connection_id) 	REFERENCES connect_users(connection_id)
 );
 
+
+
+-- Create First Message
+DO $$
+DECLARE
+    new_connection_id INT;
+BEGIN
+    -- Create a new connection and capture the connection_id
+    INSERT INTO connect_users (volunteer_uuid, connect_request_id)
+    VALUES ('64142874-5e48-4c10-bd56-57d77dae8294', 1)
+    RETURNING connection_id INTO new_connection_id;
+
+    -- Insert a new message linked to the created connection
+    INSERT INTO messages (content, volunteer_uuid, beneficiary_uuid, connection_id)
+    VALUES ('Hello Patrick, I can help!', '64142874-5e48-4c10-bd56-57d77dae8294', 'a5d990ec-c298-49e1-8d0b-a51e1dfae61d', new_connection_id);
+END $$;
+
+
+
+-- Create another message
+SELECT connection_id
+FROM connect_users
+WHERE volunteer_uuid = '64142874-5e48-4c10-bd56-57d77dae8294'
+AND connect_request_id = 1;
+
+INSERT INTO messages (content, volunteer_uuid, beneficiary_uuid, connection_id)
+VALUES ('When are you available?', '64142874-5e48-4c10-bd56-57d77dae8294', 'a5d990ec-c298-49e1-8d0b-a51e1dfae61d', 1);
