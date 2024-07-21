@@ -1,6 +1,6 @@
 require("dotenv").config();
 
-import express from "express";
+import express, { Response, Request } from "express";
 import cors from "cors";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
@@ -28,7 +28,7 @@ app.use(limiter);
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-app.get("/", (req, res) => {
+app.get("/", (req: Request, res: Response) => {
   res.send("Hello this is Ash. I am learning typescript!! Wish me luck");
 });
 
