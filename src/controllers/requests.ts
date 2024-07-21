@@ -35,7 +35,6 @@ const getRequestsByBeneficiary = async (req:Request, res: Response) => {
     }
 }
 
-
 const addRequest = async (req: Request<{}, {}, RequestBody>, res: Response) => {
     try {
         const addNewRequest = `INSERT INTO requests (beneficiary_uuid, title, details, request_type, request_urgency, request_location) VALUES ($1, $2, $3, $4, $5, $6)`;
@@ -59,8 +58,24 @@ const addRequest = async (req: Request<{}, {}, RequestBody>, res: Response) => {
     }
 }
 
+const deleteOneRequestById = async (req: Request, res: Response) => {
+    try {
+        await connectDB.query(`DELETE FROM requests WHERE request_id = $1`,
+        [req.params.request_id])
+        res.json({status: "ok", msg: 'Request deleted' });
+    } catch (error) {
+        if (error instanceof Error) {
+            console.error(error.message);
+            res.status(400).json({ status: 'error', msg: 'Error deleting request' });
+          } else {
+            console.error('An unexpected error occurred:', error);
+          } 
+    }
+}
+
 export default {
   getAllRequests,
   getRequestsByBeneficiary,
-  addRequest
+  addRequest,
+  deleteOneRequestById
 };
