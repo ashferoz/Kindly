@@ -1,9 +1,11 @@
 require("dotenv").config();
 
-import express, { Express, Request, Response } from "express";
+import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
+import connectDB from './src/db/db';
+import requests from './src/routers/requests'
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -12,7 +14,13 @@ const limiter = rateLimit({
   legacyHeaders: false,
 });
 
-const app: Express = express();
+connectDB.connect().then(() => {
+  console.log('Database connected successfully');
+}).catch((err) => {
+  console.error('Database connection error:', err.stack);
+});
+
+const app = express();
 
 app.use(cors());
 app.use(helmet());
@@ -20,17 +28,11 @@ app.use(limiter);
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-app.get("/", (req: Request, res: Response) => {
+app.get("/", (req, res) => {
   res.send("Hello this is Ash. I am learning typescript!! Wish me luck");
 });
 
-app.get("/hi", (req: Request, res: Response) => {
-  res.send("Bye");
-});
-
-app.get("/yikes", (req: Request, res: Response) => {
-  res.send("oop");
-});
+app.use('/api', requests)
 
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
