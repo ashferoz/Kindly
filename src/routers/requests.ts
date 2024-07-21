@@ -12,4 +12,6 @@ router.put('/requests', requestsController.addRequest)
 
 router.delete('/requests/:request_id', requestsController.deleteOneRequestById)
 
+router.patch('/requests/:request_id', requestsController.updateRequestById)
+
 export default router;

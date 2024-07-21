@@ -73,9 +73,72 @@ const deleteOneRequestById = async (req: Request, res: Response) => {
     }
 }
 
+const updateRequestById = async (req: Request, res: Response) => {
+    try {
+        // const updateRequest = `UPDATE requests SET (title, details, request_type, request_urgency, request_location, request_status) VALUES ($1, $2, $3, $4, $5, $6) WHERE request_id = $7`;
+
+        // const values = [
+        //     req.body.title,
+        //     req.body.details,
+        //     req.body.request_type,
+        //     req.body.request_urgency,
+        //     req.body.request_location,
+        //     req.body.id
+        //   ];
+
+        const setClause = [];
+        const values = [];
+
+        if (req.body.title) {
+            setClause.push(`title = $${values.length + 1}`);
+            values.push(req.body.title);
+        }
+
+        if (req.body.details) {
+            setClause.push(`details = $${values.length + 1}`);
+            values.push(req.body.details);
+        }
+
+        if (req.body.request_type) {
+            setClause.push(`request_type = $${values.length + 1}`);
+            values.push(req.body.request_type);
+        }
+
+        if (req.body.request_urgency) {
+            setClause.push(`request_urgency = $${values.length + 1}`);
+            values.push(req.body.request_urgency);
+        }
+
+        if (req.body.request_location) {
+            setClause.push(`request_location = $${values.length + 1}`);
+            values.push(req.body.request_location);
+        }
+
+        if (req.body.request_status) {
+            setClause.push(`request_status = $${values.length + 1}`);
+            values.push(req.body.request_status);
+        }
+
+        const updateRequest = `UPDATE requests SET ${setClause.join(', ')} WHERE request_id = $${values.length + 1}`;
+        values.push(req.params.request_id); 
+
+        await connectDB.query(updateRequest, values);
+        res.json({ status: "ok", msg: 'Request updated' });
+
+    } catch (error) {
+        if (error instanceof Error) {
+            console.error(error.message);
+            res.status(400).json({ status: 'error', msg: 'Error updating request' });
+        } else {
+            console.error('An unexpected error occurred:', error);
+        }
+    }
+}
+
 export default {
   getAllRequests,
   getRequestsByBeneficiary,
   addRequest,
-  deleteOneRequestById
+  deleteOneRequestById,
+  updateRequestById
 };
