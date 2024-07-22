@@ -1,102 +1,98 @@
-CREATE DATABASE kindly;
-
--- Languages
-CREATE TABLE languages (
-id 			SERIAL PRIMARY KEY,
-location	VARCHAR(50) NOT NULL UNIQUE
+-- ROLES table
+CREATE TABLE ROLES (
+	id 			VARCHAR(50) PRIMARY KEY NOT NULL,
+	description VARCHAR(50) NOT NULL
 );
 
-INSERT INTO languages (name)
-VALUES ('English'), ('Mandarin'), ('Malay'), ('Tamil'), ('Hokkien'), ('Cantonese');
+INSERT INTO ROLES (id, description)
+VALUES ('ADMIN', 'admin'), ('VOLUNTEER', 'volunteer'), ('BENEFICIARY' ,'beneficiary');
 
-SELECT * FROM languages;
+SELECT * FROM ROLES;
 
 
 
--- Locations
-CREATE TABLE locations (
-id 			SERIAL PRIMARY KEY,
-location	VARCHAR(255) NOT NULL UNIQUE
+
+-- LOCATIONS table
+CREATE TABLE LOCATIONS (
+id 	VARCHAR(255) PRIMARY KEY,
+description	VARCHAR(255) NOT NULL UNIQUE
 );
 
-INSERT INTO locations (location)
-VALUES ('Bedok');
-
-SELECT * FROM locations;
 
 
+INSERT INTO locations (id, description)
+VALUES ('BEDOK', 'Bedok'), ('BISHAN', 'Bishan'), ('PUNGGOL', 'Punggol');
 
--- Volunteers
-CREATE TABLE volunteers (
-uuid			UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-firstname		VARCHAR(50) NOT NULL,
-lastname		VARCHAR(50) NOT NULL,
-username		VARCHAR(20) NOT NULL UNIQUE,
-email			VARCHAR(150) NOT NULL UNIQUE,
-hashed_password	VARCHAR(255) NOT NULL,
-bio				text	
+SELECT * FROM LOCATIONS;
+
+
+
+
+-- Users table
+CREATE TABLE users(
+    uuid            UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    firstname       VARCHAR(50) NOT NULL,
+    lastname        VARCHAR(50) NOT NULL,
+    username        VARCHAR(20) NOT NULL UNIQUE,
+    email           VARCHAR(150) NOT NULL UNIQUE,
+    hashed_password VARCHAR(255) NOT NULL,
+    bio             TEXT,
+    location_id     VARCHAR(255),
+    role_id         VARCHAR(50) NOT NULL,
+    FOREIGN KEY (location_id) REFERENCES LOCATIONS(id),
+    FOREIGN KEY (role_id) REFERENCES ROLES(id)
 );
 
-INSERT INTO volunteers (firstname, lastname, username, email, hashed_password, bio)
-VALUES ('Ash', 'Feroz', 'ashferoz', 'ash@mail.com', 'password', 'hello');
 
-SELECT * FROM volunteers;
+-- Create volunteer
+INSERT INTO users (firstname, lastname, username, email, hashed_password, bio, role_id)
+VALUES ('Squidward', 'Tentacles', 'squidward', 'st@mail.com', 'password','I do volunteering on the side and help when I can.', 'VOLUNTEER');
+
+-- Create beneficiary
+INSERT INTO users (firstname, lastname, username, email, hashed_password, location_id, role_id)
+VALUES ('Patrick', 'Star', 'Pat', 'pat@mail.com', 'password', 'BEDOK', 'BENEFICIARY');
 
 
 
--- Beneficiaries
-CREATE TABLE beneficiaries (
-uuid 			UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-firstname 		VARCHAR(50) NOT NULL,
-lastname 		VARCHAR(50) NOT NULL,
-username 		VARCHAR(20) NOT NULL UNIQUE,
-email 			VARCHAR(150) NOT NULL UNIQUE,
-hashed_password VARCHAR(255) NOT NULL,
-language_id 	INT NOT NULL,
-location_id		INT NOT NULL,
-FOREIGN KEY 	(language_id) REFERENCES languages(id),
-FOREIGN KEY		(location_id) REFERENCES locations(id)
+SELECT * FROM users;
+
+
+
+
+
+-- Category table
+CREATE TABLE CATEGORY (
+id 			VARCHAR(50) PRIMARY KEY,
+description	VARCHAR(50) NOT NULL UNIQUE
 );
 
-INSERT INTO beneficiaries (firstname, lastname, username, email, hashed_password, language_id, location_id)
-VALUES ('Patrick', 'Star', 'patrickstar', 'patrick@mail.com', 'password', 1, 1);
-
-SELECT * FROM beneficiaries;
-
-
-
--- Donation Type
-CREATE TABLE donations_type (
-id 			SERIAL PRIMARY KEY,
-donation	VARCHAR(255) NOT NULL UNIQUE
-);
-
-INSERT INTO donations_type (donation)
-VALUES ('food'), ('clothes'), ('electronics');
+INSERT INTO CATEGORY (id, description)
+VALUES ('FOOD', 'Food'), ('CLOTHES', 'Clothes'), ('ELECTRONICS', 'Electronics'), ('FURNITURE', 'Furniture');
 
 SELECT * FROM donations_type;
 
 
 
--- Request Urgencies
-CREATE TABLE request_urgencies (
-id		SERIAL PRIMARY KEY,
-urgency	VARCHAR(255) NOT NULL UNIQUE
+
+-- Urgencies table
+CREATE TABLE URGENCIES (
+id			VARCHAR(50) PRIMARY KEY,
+description	VARCHAR(50) NOT NULL UNIQUE
 );
 
-INSERT INTO request_urgencies (urgency)
-VALUES	('urgent'), ('not urgent');
+INSERT INTO URGENCIES (id, description)
+VALUES	('URGENT', 'Urgent'), ('NOT_URGENT', 'Not Urgent');
 
 
 
--- Request Status
-CREATE TABLE request_statuses (
-id		SERIAL PRIMARY KEY,
-status	VARCHAR(255) NOT NULL UNIQUE
+-- Status table
+CREATE TABLE STATUSES (
+id			VARCHAR(50) PRIMARY KEY,
+description	VARCHAR(50) NOT NULL UNIQUE
 );
 
-INSERT INTO request_statuses (status)
-VALUES	('open'), ('on going'), ('complete');
+INSERT INTO STATUSES (id, description)
+VALUES	('OPEN', 'Open'), ('ON_GOING', 'On Going'), ('COMPLETE', 'Complete');
 
 SELECT * FROM request_statuses;
 
@@ -105,39 +101,39 @@ SELECT * FROM request_statuses;
 -- Request
 CREATE TABLE requests (
 request_id 			SERIAL PRIMARY KEY,
-beneficiary_uuid 	UUID NOT NULL,
+user_uuid 			UUID NOT NULL,
 title 				VARCHAR(50) NOT NULL,
 details 			TEXT,
-request_type 		INT NOT NULL,
-request_urgency 	INT NOT NULL,
-request_location 	INT NOT NULL,
-request_status 		INT NOT NULL DEFAULT 1,
+request_category 	VARCHAR(50) NOT NULL,
+request_urgency 	VARCHAR(50) NOT NULL,
+request_location 	VARCHAR(255) NOT NULL,
+request_status 		VARCHAR(50) NOT NULL DEFAULT 'OPEN',
 date_created 		TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-FOREIGN KEY (beneficiary_uuid) 	REFERENCES beneficiaries(uuid),
-FOREIGN KEY (request_type) 		REFERENCES donations_type(id),
-FOREIGN KEY (request_urgency) 	REFERENCES request_urgencies(id),
+FOREIGN KEY (user_uuid) 		REFERENCES users(uuid),
+FOREIGN KEY (request_category) 	REFERENCES category(id),
+FOREIGN KEY (request_urgency) 	REFERENCES urgencies(id),
 FOREIGN KEY (request_location) 	REFERENCES locations(id),
-FOREIGN KEY (request_status) 	REFERENCES request_statuses(id)
+FOREIGN KEY (request_status) 	REFERENCES statuses(id)
 );
 
-INSERT INTO requests (beneficiary_uuid, title, details, request_type, request_urgency, request_location)
-VALUES ('a5d990ec-c298-49e1-8d0b-a51e1dfae61d', 'Need jellyfish net.', 'I cannot afford a new net', 3, 2, 1);
-
+INSERT INTO requests (user_uuid, title, details, request_category, request_urgency, request_location)
+VALUES ('901f1c72-5625-42a2-bbcc-8fac7cacd699', 'Need work pants.', 'Got a new job.', 'CLOTHES', 'URGENT', 'BEDOK');
 
 
 SELECT * FROM requests;
 
 
 
+
 -- Connect Volunteer to Beneficiary request
 CREATE TABLE connect_users (
 connection_id      		SERIAL PRIMARY KEY,
-request_status     		INT NOT NULL DEFAULT 1,
+request_status 			VARCHAR(50) NOT NULL DEFAULT 'OPEN',
 date_connected     		TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 volunteer_uuid     		UUID NOT NULL,
 connect_request_id 		INT NOT NULL,
 FOREIGN KEY (connect_request_id) 	REFERENCES requests(request_id),
-FOREIGN KEY (volunteer_uuid) 		REFERENCES volunteers(uuid)
+FOREIGN KEY (volunteer_uuid) 		REFERENCES users(uuid)
 );
 
 
@@ -151,8 +147,8 @@ date_created      	TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 volunteer_uuid    	UUID NOT NULL,
 beneficiary_uuid  	UUID NOT NULL,
 connection_id     	INT NOT NULL,
-FOREIGN KEY (volunteer_uuid) 	REFERENCES volunteers(uuid),
-FOREIGN KEY (beneficiary_uuid) 	REFERENCES beneficiaries(uuid),
+FOREIGN KEY (volunteer_uuid) 	REFERENCES users(uuid),
+FOREIGN KEY (beneficiary_uuid) 	REFERENCES users(uuid),
 FOREIGN KEY (connection_id) 	REFERENCES connect_users(connection_id)
 );
 
@@ -165,12 +161,12 @@ DECLARE
 BEGIN
     -- Create a new connection and capture the connection_id
     INSERT INTO connect_users (volunteer_uuid, connect_request_id)
-    VALUES ('64142874-5e48-4c10-bd56-57d77dae8294', 1)
+    VALUES ('d87a64f5-ed0c-4400-87a3-52146c13caae', 1)
     RETURNING connection_id INTO new_connection_id;
 
     -- Insert a new message linked to the created connection
     INSERT INTO messages (content, volunteer_uuid, beneficiary_uuid, connection_id)
-    VALUES ('Hello Patrick, I can help!', '64142874-5e48-4c10-bd56-57d77dae8294', 'a5d990ec-c298-49e1-8d0b-a51e1dfae61d', new_connection_id);
+    VALUES ('I have extra biscuits. When can I pass it to you?', 'd87a64f5-ed0c-4400-87a3-52146c13caae', 'd8ae9420-cabd-4d3f-b6f3-ff9336646a39', new_connection_id);
 END $$;
 
 
@@ -178,8 +174,8 @@ END $$;
 -- Create another message
 SELECT connection_id
 FROM connect_users
-WHERE volunteer_uuid = '64142874-5e48-4c10-bd56-57d77dae8294'
+WHERE volunteer_uuid = 'fe30ea34-c956-43d7-ad10-01ea540489c9'
 AND connect_request_id = 1;
 
 INSERT INTO messages (content, volunteer_uuid, beneficiary_uuid, connection_id)
-VALUES ('When are you available?', '64142874-5e48-4c10-bd56-57d77dae8294', 'a5d990ec-c298-49e1-8d0b-a51e1dfae61d', 1);
+VALUES ('I am Gary, not Patrick...', 'fe30ea34-c956-43d7-ad10-01ea540489c9', 'd8ae9420-cabd-4d3f-b6f3-ff9336646a39', 1);

@@ -4,7 +4,7 @@ import express, { Response, Request } from "express";
 import cors from "cors";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
-import connectDB from './src/db/db';
+import pool from './src/db/db';
 import requests from './src/routers/requests'
 
 const limiter = rateLimit({
@@ -14,11 +14,6 @@ const limiter = rateLimit({
   legacyHeaders: false,
 });
 
-connectDB.connect().then(() => {
-  console.log('Database connected successfully');
-}).catch((err) => {
-  console.error('Database connection error:', err.stack);
-});
 
 const app = express();
 

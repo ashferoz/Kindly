@@ -1,8 +1,8 @@
 export interface RequestBody {
-    beneficiary_uuid: string;
+    user_uuid: string;
     title: string;
     details: string;
-    request_type: number;
-    request_urgency: number;
-    request_location: number;
+    request_category: string;
+    request_urgency: string;
+    request_location: string;
   }

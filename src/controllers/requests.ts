@@ -1,10 +1,10 @@
 import { Response, Request } from "express";
-import connectDB from "../db/db";
+import pool from "../db/db";
 import { RequestBody } from '../interfaces/RequestTypes';
 
 const getAllRequests = async (req: Request, res: Response) => {
   try {
-    const allRequests = await connectDB.query("SELECT * FROM requests");
+    const allRequests = await pool.query("SELECT * FROM requests");
     res.json(allRequests.rows);
   } catch (error) {
     if (error instanceof Error) {
@@ -20,9 +20,9 @@ const getAllRequests = async (req: Request, res: Response) => {
 
 const getRequestsByBeneficiary = async (req:Request, res: Response) => {
     try {
-        const allRequestsByBeneficiary = await connectDB.query(
-            'SELECT * FROM requests WHERE beneficiary_uuid = $1',
-            [req.body.beneficiary_uuid] 
+        const allRequestsByBeneficiary = await pool.query(
+            'SELECT * FROM requests WHERE user_uuid = $1',
+            [req.body.user_uuid] 
           )
           res.json(allRequestsByBeneficiary.rows)
     } catch (error) {
@@ -37,16 +37,16 @@ const getRequestsByBeneficiary = async (req:Request, res: Response) => {
 
 const addRequest = async (req: Request<{}, {}, RequestBody>, res: Response) => {
     try {
-        const addNewRequest = `INSERT INTO requests (beneficiary_uuid, title, details, request_type, request_urgency, request_location) VALUES ($1, $2, $3, $4, $5, $6)`;
+        const addNewRequest = `INSERT INTO requests (user_uuid, title, details, request_category, request_urgency, request_location) VALUES ($1, $2, $3, $4, $5, $6)`;
         const values = [
-            req.body.beneficiary_uuid,
+            req.body.user_uuid,
             req.body.title,
             req.body.details,
-            req.body.request_type,
+            req.body.request_category,
             req.body.request_urgency,
             req.body.request_location
           ];
-        await connectDB.query(addNewRequest, values)
+        await pool.query(addNewRequest, values)
         res.json({status: "ok", msg: 'Request added' });
     } catch (error) {
         if (error instanceof Error) {
@@ -60,7 +60,7 @@ const addRequest = async (req: Request<{}, {}, RequestBody>, res: Response) => {
 
 const deleteOneRequestById = async (req: Request, res: Response) => {
     try {
-        await connectDB.query(`DELETE FROM requests WHERE request_id = $1`,
+        await pool.query(`DELETE FROM requests WHERE request_id = $1`,
         [req.params.request_id])
         res.json({status: "ok", msg: 'Request deleted' });
     } catch (error) {
@@ -75,16 +75,6 @@ const deleteOneRequestById = async (req: Request, res: Response) => {
 
 const updateRequestById = async (req: Request, res: Response) => {
     try {
-        // const updateRequest = `UPDATE requests SET (title, details, request_type, request_urgency, request_location, request_status) VALUES ($1, $2, $3, $4, $5, $6) WHERE request_id = $7`;
-
-        // const values = [
-        //     req.body.title,
-        //     req.body.details,
-        //     req.body.request_type,
-        //     req.body.request_urgency,
-        //     req.body.request_location,
-        //     req.body.id
-        //   ];
 
         const setClause = [];
         const values = [];
@@ -99,9 +89,9 @@ const updateRequestById = async (req: Request, res: Response) => {
             values.push(req.body.details);
         }
 
-        if (req.body.request_type) {
-            setClause.push(`request_type = $${values.length + 1}`);
-            values.push(req.body.request_type);
+        if (req.body.request_category) {
+            setClause.push(`request_category = $${values.length + 1}`);
+            values.push(req.body.request_category);
         }
 
         if (req.body.request_urgency) {
@@ -122,7 +112,7 @@ const updateRequestById = async (req: Request, res: Response) => {
         const updateRequest = `UPDATE requests SET ${setClause.join(', ')} WHERE request_id = $${values.length + 1}`;
         values.push(req.params.request_id); 
 
-        await connectDB.query(updateRequest, values);
+        await pool.query(updateRequest, values);
         res.json({ status: "ok", msg: 'Request updated' });
 
     } catch (error) {
