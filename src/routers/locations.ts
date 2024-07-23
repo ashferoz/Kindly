@@ -7,4 +7,6 @@ router.get("/", locationController.getAllLocations);
 
 router.delete("/:id", locationController.deleteLocationsById);
 
+router.put("/", locationController.addNewLocation)
+
 export default router;
