@@ -12,3 +12,14 @@ export interface AddNewUserBody {
     location_id?: string,
     role_id: string,
 }
+
+export interface UpdateUserBody {
+    uuid: string,
+    firstname?: string,
+    lastname?: string,
+    username?: string,
+    email?: string,
+    hashed_password?: string,
+    bio?: string,
+    location_id?: string,
+}

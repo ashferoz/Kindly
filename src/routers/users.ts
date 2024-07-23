@@ -9,4 +9,6 @@ router.delete("/", usersController.deleteOneUserByUUID)
 
 router.put("/", usersController.addNewUser)
 
+router.patch("/", usersController.updateUserByUUID)
+
 export default router;
