@@ -27,3 +27,11 @@ export interface UpdateRequestBody {
 export interface UpdateRequestParams {
   request_id: number
 }
+
+export interface ConnectToRequestBody {
+  volunteer_uuid: string
+}
+
+export interface ConnectToRequestParams {
+  connect_request_id: number
+}

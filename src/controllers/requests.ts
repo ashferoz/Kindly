@@ -6,6 +6,8 @@ import {
   DelRequestParams,
   UpdateRequestBody,
   UpdateRequestParams,
+  ConnectToRequestBody,
+  ConnectToRequestParams
 } from "../interfaces/RequestTypes";
 
 const getAllRequests = async (req: Request, res: Response) => {
@@ -147,10 +149,30 @@ const updateRequestById = async (
   }
 };
 
+const connectToRequest = async (
+  req: Request<ConnectToRequestParams, {}, ConnectToRequestBody>,
+  res: Response
+) => {
+  try {
+    const connectRequest = `INSERT INTO connect_users (volunteer_uuid, connect_request_id) VALUES($1, $2)`;
+    const values = [req.body.volunteer_uuid, req.params.connect_request_id];
+    await pool.query(connectRequest, values);
+    res.json({ status: "ok", msg: "user is connected" });
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error.message);
+      res.status(400).json({ status: "error", msg: "Error conncting user" });
+    } else {
+      console.error("An unexpected error occurred:", error);
+    }
+  }
+};
+
 export default {
   getAllRequests,
   getRequestsByBeneficiary,
   addRequest,
   deleteOneRequestById,
   updateRequestById,
+  connectToRequest
 };
