@@ -5,4 +5,6 @@ const router = express.Router();
 
 router.get("/", categoryController.getAllCategories);
 
+router.put("/", categoryController.addNewCategory)
+
 export default router;
