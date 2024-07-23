@@ -3,6 +3,7 @@ import pool from "../db/db";
 import {
   GetMessagesByIdParams,
   DelMessageByIdParams,
+  AddMessageToConnectionIdBody,
 } from "../interfaces/MessageTypes";
 
 const getAllMessages = async (req: Request, res: Response) => {
@@ -61,4 +62,33 @@ const deleteMessagesById = async (
   }
 };
 
-export default { getAllMessages, getMessagesByConnectionId, deleteMessagesById };
+const addMessagesToConnectionId = async (
+  req: Request<{}, {}, AddMessageToConnectionIdBody>,
+  res: Response
+) => {
+  try {
+    const addMessage = `INSERT INTO messages (content, volunteer_uuid, beneficiary_uuid, connection_id) VALUES($1, $2, $3, $4)`;
+    const values = [
+      req.body.content,
+      req.body.volunteer_uuid,
+      req.body.beneficiary_uuid,
+      req.body.connection_id,
+    ];
+    await pool.query(addMessage, values);
+    res.json({ status: "ok", msg: "message added" });
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error.message);
+      res.status(400).json({ status: "error", msg: "Error adding message" });
+    } else {
+      console.error("An unexpected error occurred:", error);
+    }
+  }
+};
+
+export default {
+  getAllMessages,
+  getMessagesByConnectionId,
+  deleteMessagesById,
+  addMessagesToConnectionId
+};

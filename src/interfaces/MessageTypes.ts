@@ -5,3 +5,10 @@ export interface GetMessagesByIdParams {
 export interface DelMessageByIdParams {
     id: number
 }
+
+export interface AddMessageToConnectionIdBody {
+    content: string,
+    volunteer_uuid: string,
+    beneficiary_uuid: string,
+    connection_id: number
+}

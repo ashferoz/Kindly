@@ -8,4 +8,6 @@ router.get("/:connection_id", messageController.getMessagesByConnectionId);
 
 router.delete("/:id", messageController.deleteMessagesById);
 
+router.put("/", messageController.addMessagesToConnectionId)
+
 export default router;
