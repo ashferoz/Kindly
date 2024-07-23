@@ -5,4 +5,6 @@ const router = express.Router();
 
 router.get("/", locationController.getAllLocations);
 
+router.delete("/:id", locationController.deleteLocationsById);
+
 export default router;

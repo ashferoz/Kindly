@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import pool from "../db/db";
+import { DelLocationParams } from "../interfaces/LocationTypes";
 
 const getAllLocations = async (req: Request, res: Response) => {
   try {
@@ -17,5 +18,23 @@ const getAllLocations = async (req: Request, res: Response) => {
   }
 };
 
+const deleteLocationsById = async (
+  req: Request<DelLocationParams, {}, {}>,
+  res: Response
+) => {
+  try {
+    await pool.query(`DELETE FROM LOCATIONS where id = $1`, [req.params.id]);
+    res.json({ status: "ok", msg: "Location deleted" });
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error.message);
+      res.status(400).json({ status: "error", msg: "Error deleting category" });
+    } else {
+      console.error("An unexpected error occurred:", error);
+    }
+  }
+};
 
-export default {getAllLocations}
+
+
+export default { getAllLocations, deleteLocationsById };
