@@ -7,6 +7,7 @@ import rateLimit from "express-rate-limit";
 import requests from "./src/routers/requests";
 import users from "./src/routers/users";
 import categories from "./src/routers/categories"
+import locations from "./src/routers/locations"
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -30,6 +31,7 @@ app.get("/", (req: Request, res: Response) => {
 app.use("/api", requests);
 app.use("/users", users);
 app.use("/category", categories)
+app.use('/locations', locations)
 
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
