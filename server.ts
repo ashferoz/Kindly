@@ -8,6 +8,7 @@ import requests from "./src/routers/requests";
 import users from "./src/routers/users";
 import categories from "./src/routers/categories"
 import locations from "./src/routers/locations"
+import messages from "./src/routers/messages"
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -32,6 +33,7 @@ app.use("/api", requests);
 app.use("/users", users);
 app.use("/category", categories)
 app.use('/locations', locations)
+app.use('/messages', messages)
 
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
