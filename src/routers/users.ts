@@ -7,4 +7,6 @@ router.get("/", usersController.getAllUsers);
 
 router.delete("/", usersController.deleteOneUserByUUID)
 
+router.put("/", usersController.addNewUser)
+
 export default router;
