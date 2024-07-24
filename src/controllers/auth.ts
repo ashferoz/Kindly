@@ -107,9 +107,17 @@ const login = async (req: Request, res: Response) => {
   }
 };
 
+interface TokenPayload {
+  username: string;
+  role_id: string;
+}
+
 const refresh = async (req: Request, res: Response) => {
   try {
-    const decoded = jwt.verify(req.body.refresh, token("REFRESH_SECRET"));
+    const decoded = jwt.verify(
+      req.body.refresh,
+      token("REFRESH_SECRET")
+    ) as TokenPayload;
     const claims = { username: decoded.username, role_id: decoded.role_id };
 
     const access = jwt.sign(claims, token("ACCESS_SECRET"), {
