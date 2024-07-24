@@ -7,12 +7,13 @@ import {
   UpdateRequestBody,
   UpdateRequestParams,
   ConnectToRequestBody,
-  ConnectToRequestParams
+  ConnectToRequestParams,
 } from "../interfaces/RequestTypes";
 
 const getAllRequests = async (req: Request, res: Response) => {
   try {
-    const allRequests = await pool.query("SELECT * FROM requests");
+    const allRequests = await pool.query(`
+      SELECT * FROM requests r JOIN users u ON r.user_uuid = u.uuid`);
     res.json(allRequests.rows);
   } catch (error) {
     if (error instanceof Error) {
@@ -174,5 +175,5 @@ export default {
   addRequest,
   deleteOneRequestById,
   updateRequestById,
-  connectToRequest
+  connectToRequest,
 };
