@@ -70,8 +70,6 @@ const login = async (req: Request, res: Response) => {
       return res.status(400).json({ status: "error", msg: "Invalid username" });
     }
 
-
-
     const success = await bcrypt.compare(
       req.body.hashed_password,
       findUser.rows[0].hashed_password
@@ -80,7 +78,7 @@ const login = async (req: Request, res: Response) => {
     if (!success) {
       console.log("email or password error");
       return res.status(401).json({ status: "error", msg: "login failed" });
-    } 
+    }
 
     const claims = {
       username: findUser.rows[0].username,
@@ -98,9 +96,7 @@ const login = async (req: Request, res: Response) => {
     });
 
     console.log({ access, refresh });
-    res.json({ status: 'ok', msg: 'Login successful', access, refresh });
-
-
+    res.json({ status: "ok", msg: "Login successful", access, refresh });
   } catch (error) {
     if (error instanceof Error) {
       console.error(error.message);
@@ -111,4 +107,25 @@ const login = async (req: Request, res: Response) => {
   }
 };
 
-export default { register, login };
+const refresh = async (req: Request, res: Response) => {
+  try {
+    const decoded = jwt.verify(req.body.refresh, token("REFRESH_SECRET"));
+    const claims = { username: decoded.username, role_id: decoded.role_id };
+
+    const access = jwt.sign(claims, token("ACCESS_SECRET"), {
+      expiresIn: "20m",
+      jwtid: uuidv4(),
+    });
+
+    res.json({ access });
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error.message);
+      res.status(401).json({ status: "error", msg: "refresh error" });
+    } else {
+      console.error("An unexpected error occurred:", error);
+    }
+  }
+};
+
+export default { register, login, refresh };
