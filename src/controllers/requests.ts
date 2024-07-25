@@ -13,7 +13,21 @@ import {
 const getAllRequests = async (req: Request, res: Response) => {
   try {
     const allRequests = await pool.query(`
-      SELECT * FROM requests r JOIN users u ON r.user_uuid = u.uuid`);
+     SELECT 
+     r.request_id,
+     r.title,
+     r.details,
+     rs.description AS status,
+     u.username,
+     rc.description AS category,
+     rl.description AS location,
+     ru.description AS urgency
+     FROM requests r
+     JOIN users u ON r.user_uuid = u.uuid
+     JOIN category rc ON r.request_category = rc.id
+     JOIN locations rl ON r.request_location = rl.id
+     JOIN statuses rs ON r.request_status = rs.id
+     JOIN urgencies ru ON r.request_urgency = ru.id;`);
     res.json(allRequests.rows);
   } catch (error) {
     if (error instanceof Error) {
