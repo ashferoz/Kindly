@@ -15,4 +15,6 @@ router.patch("/requests/:request_id", requestsController.updateRequestById);
 
 router.put("/requests/:connect_request_id", requestsController.connectToRequest)
 
+router.post('/requests/connected', requestsController.getAllConnectedRequests)
+
 export default router;
