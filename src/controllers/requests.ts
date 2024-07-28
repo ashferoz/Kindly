@@ -186,28 +186,25 @@ const connectToRequest = async (
 const getAllConnectedRequests = async (req: Request, res: Response) => {
   try {
     const allRequests = await pool.query(
-      `SELECT 
-        cu.*,
-        r.*
-      FROM 
-        connect_users cu
-      JOIN 
-        requests r ON cu.connect_request_id = r.request_id
-      WHERE 
-        cu.volunteer_uuid = $1`,
+      `SELECT cu.*, r.*, u.username AS beneficiary_username
+      FROM connect_users cu
+      JOIN requests r ON cu.connect_request_id = r.request_id 
+      JOIN users u ON r.user_uuid = u.uuid
+      WHERE cu.volunteer_uuid = $1`,
       [req.body.volunteer_uuid]
     );
     res.json(allRequests.rows);
   } catch (error) {
     if (error instanceof Error) {
       console.error(error.message);
-      res.status(400).json({ status: "error", msg: "Error getting connected requests" });
+      res
+        .status(400)
+        .json({ status: "error", msg: "Error getting connected requests" });
     } else {
       console.error("An unexpected error occurred:", error);
     }
   }
 };
-
 
 export default {
   getAllRequests,
@@ -216,5 +213,5 @@ export default {
   deleteOneRequestById,
   updateRequestById,
   connectToRequest,
-  getAllConnectedRequests
+  getAllConnectedRequests,
 };
