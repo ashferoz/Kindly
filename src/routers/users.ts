@@ -9,4 +9,6 @@ router.delete("/", usersController.deleteOneUserByUUID)
 
 router.patch("/", usersController.updateUserByUUID)
 
+router.post('/profile', usersController.getUserByUUID)
+
 export default router;

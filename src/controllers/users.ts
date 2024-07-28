@@ -2,7 +2,6 @@ import { Response, Request } from "express";
 import pool from "../db/db";
 import {
   DelRequestBody,
-  AddNewUserBody,
   UpdateUserBody,
 } from "../interfaces/UsersTypes";
 
@@ -19,6 +18,20 @@ const getAllUsers = async (req: Request, res: Response) => {
     }
   }
 };
+
+const getUserByUUID = async (req: Request, res: Response) => {
+  try {
+    const userDetails = await pool.query(`SELECT * FROM users WHERE uuid= $1`, [req.body.uuid])
+    res.json(userDetails.rows)
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error.message);
+      res.status(400).json({ status: "error", msg: "error getting user's info" });
+    } else {
+      console.error("An unexpected error occurred:", error);
+    }
+  }
+}
 
 const deleteOneUserByUUID = async (
   req: Request<{}, {}, DelRequestBody>,
@@ -99,4 +112,4 @@ const updateUserByUUID = async (
   }
 };
 
-export default { getAllUsers, deleteOneUserByUUID, updateUserByUUID };
+export default { getAllUsers, deleteOneUserByUUID, updateUserByUUID, getUserByUUID };

@@ -76,14 +76,17 @@ const login = async (req: Request, res: Response) => {
     );
 
     if (!success) {
-      console.log("email or password error");
+      console.log("username or password error");
       return res.status(401).json({ status: "error", msg: "login failed" });
     }
 
     const claims = {
       username: findUser.rows[0].username,
       role: findUser.rows[0].role_id,
+      uuid: findUser.rows[0].uuid
     };
+
+    console.log(claims)
 
     const access = jwt.sign(claims, token("ACCESS_SECRET"), {
       expiresIn: "20m",
@@ -95,7 +98,6 @@ const login = async (req: Request, res: Response) => {
       jwtid: uuidv4(),
     });
 
-    console.log({ access, refresh });
     res.json({ status: "ok", msg: "Login successful", access, refresh });
   } catch (error) {
     if (error instanceof Error) {
@@ -109,7 +111,8 @@ const login = async (req: Request, res: Response) => {
 
 interface TokenPayload {
   username: string;
-  role_id: string;
+  role: string;
+  uuid: string
 }
 
 const refresh = async (req: Request, res: Response) => {
@@ -118,7 +121,7 @@ const refresh = async (req: Request, res: Response) => {
       req.body.refresh,
       token("REFRESH_SECRET")
     ) as TokenPayload;
-    const claims = { username: decoded.username, role_id: decoded.role_id };
+    const claims = { username: decoded.username, role_id: decoded.role, uuid: decoded.uuid  };
 
     const access = jwt.sign(claims, token("ACCESS_SECRET"), {
       expiresIn: "20m",
