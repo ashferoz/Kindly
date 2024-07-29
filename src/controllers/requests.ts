@@ -169,6 +169,15 @@ const connectToRequest = async (
   res: Response
 ) => {
   try {
+    const checkConnection = await pool.query(
+      "SELECT 1 FROM connect_users WHERE volunteer_uuid = $1 AND connect_request_id = $2",
+      [req.body.volunteer_uuid, req.params.connect_request_id]
+    );
+
+    if (checkConnection.rows[0] > 0) {
+      return res.status(400).json({ status: "error", msg: "Already connected to this request" });
+    }
+
     const connectRequest = `INSERT INTO connect_users (volunteer_uuid, connect_request_id) VALUES($1, $2)`;
     const values = [req.body.volunteer_uuid, req.params.connect_request_id];
     await pool.query(connectRequest, values);
