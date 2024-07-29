@@ -12,26 +12,26 @@ export interface GetRequestBody {
 }
 
 export interface DelRequestParams {
-  request_id: number;
+  request_id: string;
 }
 
 export interface UpdateRequestBody {
-  title?: string,
-  details?: string,
-  request_category?: string,
-  request_urgency?: string,
-  request_location?: string,
-  request_status?: string
+  title?: string;
+  details?: string;
+  request_category?: string;
+  request_urgency?: string;
+  request_location?: string;
+  request_status?: string;
 }
 
 export interface UpdateRequestParams {
-  request_id: number
+  request_id: string;
 }
 
 export interface ConnectToRequestBody {
-  volunteer_uuid: string
+  volunteer_uuid: string;
 }
 
 export interface ConnectToRequestParams {
-  connect_request_id: number
+  connect_request_id: string;
 }

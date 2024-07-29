@@ -91,7 +91,7 @@ const addRequest = async (
 };
 
 const deleteOneRequestById = async (
-  req: Request<DelRequestParams, {}, {}>,
+  req: Request,
   res: Response
 ) => {
   try {
@@ -110,7 +110,7 @@ const deleteOneRequestById = async (
 };
 
 const updateRequestById = async (
-  req: Request<UpdateRequestParams, {}, UpdateRequestBody>,
+  req: Request,
   res: Response
 ) => {
   try {
@@ -165,7 +165,7 @@ const updateRequestById = async (
 };
 
 const connectToRequest = async (
-  req: Request<ConnectToRequestParams, {}, ConnectToRequestBody>,
+  req: Request,
   res: Response
 ) => {
   try {
@@ -192,7 +192,7 @@ const connectToRequest = async (
   }
 };
 
-const getAllConnectedRequests = async (req: Request, res: Response) => {
+const getVolunteersConnectedRequests = async (req: Request, res: Response) => {
   try {
     const allRequests = await pool.query(
       `SELECT cu.*, r.*, u.username AS beneficiary_username
@@ -222,5 +222,5 @@ export default {
   deleteOneRequestById,
   updateRequestById,
   connectToRequest,
-  getAllConnectedRequests,
+  getVolunteersConnectedRequests,
 };

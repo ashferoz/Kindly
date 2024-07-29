@@ -1,20 +1,21 @@
 import express from "express";
 import requestsController from "../controllers/requests";
+import auth from "../middleware/auth";
 
 const router = express.Router();
 
 router.get("/requests", requestsController.getAllRequests);
 
-router.post("/requests/id", requestsController.getRequestsByBeneficiary);
+router.post("/requests/id", auth, requestsController.getRequestsByBeneficiary);
 
-router.put("/requests", requestsController.addRequest);
+router.put("/requests", auth, requestsController.addRequest);
 
-router.delete("/requests/:request_id", requestsController.deleteOneRequestById);
+router.delete("/requests/:request_id", auth, requestsController.deleteOneRequestById);
 
-router.patch("/requests/:request_id", requestsController.updateRequestById);
+router.patch("/requests/:request_id", auth, requestsController.updateRequestById);
 
-router.put("/requests/:connect_request_id", requestsController.connectToRequest)
+router.put("/requests/:connect_request_id", auth, requestsController.connectToRequest);
 
-router.post('/requests/connected', requestsController.getAllConnectedRequests)
+router.post("/requests/connected", auth, requestsController.getVolunteersConnectedRequests);
 
 export default router;

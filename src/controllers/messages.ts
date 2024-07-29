@@ -23,7 +23,7 @@ const getAllMessages = async (req: Request, res: Response) => {
 };
 
 const getMessagesByConnectionId = async (
-  req: Request<GetMessagesByIdParams, {}, {}>,
+  req: Request,
   res: Response
 ) => {
   try {
@@ -46,7 +46,7 @@ const getMessagesByConnectionId = async (
 };
 
 const deleteMessagesById = async (
-  req: Request<DelMessageByIdParams, {}, {}>,
+  req: Request,
   res: Response
 ) => {
   try {
