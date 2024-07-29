@@ -4,5 +4,4 @@ export interface DelLocationParams {
 
 export interface AddLocationBody {
   id: string;
-  description: string;
 }

@@ -3,23 +3,21 @@ export interface DelRequestBody {
 }
 
 export interface AddNewUserBody {
-    firstname: string,
-    lastname: string,
+    first_name: string,
+    last_name: string,
     username: string,
     email: string,
-    hashed_password: string,
+    password: string,
     bio?: string,
-    location_id?: string,
-    role_id: string,
+    role: string,
 }
 
 export interface UpdateUserBody {
     uuid: string,
-    firstname?: string,
-    lastname?: string,
+    first_name?: string,
+    last_name?: string,
     username?: string,
     email?: string,
-    hashed_password?: string,
+    password?: string,
     bio?: string,
-    location_id?: string,
 }

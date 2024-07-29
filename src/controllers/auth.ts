@@ -32,19 +32,18 @@ const register = async (req: Request, res: Response) => {
       return res.status(400).json({ status: "error", msg: "duplicate email" });
     }
 
-    const hashed_password = await bcrypt.hash(req.body.hashed_password, 12);
+    const password = await bcrypt.hash(req.body.password, 12);
 
-    const addUser = `INSERT INTO users (firstname, lastname, username, email, hashed_password, bio, location_id, role_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`;
+    const addUser = `INSERT INTO users (first_name, last_name, username, email, password, bio, role) VALUES ($1, $2, $3, $4, $5, $6, $7)`;
 
     const values = [
-      req.body.firstname,
-      req.body.lastname,
+      req.body.first_name,
+      req.body.last_name,
       req.body.username,
       req.body.email,
-      hashed_password,
+      password,
       req.body.bio,
-      req.body.location_id,
-      req.body.role_id,
+      req.body.role,
     ];
 
     await pool.query(addUser, values);
@@ -71,8 +70,8 @@ const login = async (req: Request, res: Response) => {
     }
 
     const success = await bcrypt.compare(
-      req.body.hashed_password,
-      findUser.rows[0].hashed_password
+      req.body.password,
+      findUser.rows[0].password
     );
 
     if (!success) {
@@ -82,7 +81,7 @@ const login = async (req: Request, res: Response) => {
 
     const claims = {
       username: findUser.rows[0].username,
-      role: findUser.rows[0].role_id,
+      role: findUser.rows[0].role,
       uuid: findUser.rows[0].uuid
     };
 
@@ -121,7 +120,7 @@ const refresh = async (req: Request, res: Response) => {
       req.body.refresh,
       token("REFRESH_SECRET")
     ) as TokenPayload;
-    const claims = { username: decoded.username, role_id: decoded.role, uuid: decoded.uuid  };
+    const claims = { username: decoded.username, role: decoded.role, uuid: decoded.uuid  };
 
     const access = jwt.sign(claims, token("ACCESS_SECRET"), {
       expiresIn: "20m",

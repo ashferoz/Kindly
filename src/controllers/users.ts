@@ -59,14 +59,14 @@ const updateUserByUUID = async (
     const setClause = [];
     const values = [];
 
-    if (req.body.firstname) {
-      setClause.push(`firstname = $${values.length + 1}`);
-      values.push(req.body.firstname);
+    if (req.body.first_name) {
+      setClause.push(`first_name = $${values.length + 1}`);
+      values.push(req.body.first_name);
     }
 
-    if (req.body.lastname) {
-      setClause.push(`lastname = $${values.length + 1}`);
-      values.push(req.body.lastname);
+    if (req.body.last_name) {
+      setClause.push(`last_name = $${values.length + 1}`);
+      values.push(req.body.last_name);
     }
 
     if (req.body.username) {
@@ -79,19 +79,14 @@ const updateUserByUUID = async (
       values.push(req.body.email);
     }
 
-    if (req.body.hashed_password) {
-      setClause.push(`hashed_password = $${values.length + 1}`);
-      values.push(req.body.hashed_password);
+    if (req.body.password) {
+      setClause.push(`password = $${values.length + 1}`);
+      values.push(req.body.password);
     }
 
     if (req.body.bio) {
       setClause.push(`bio = $${values.length + 1}`);
       values.push(req.body.bio);
-    }
-
-    if (req.body.location_id) {
-      setClause.push(`location_id = $${values.length + 1}`);
-      values.push(req.body.location_id);
     }
 
     const updateUser = `UPDATE users SET ${setClause.join(

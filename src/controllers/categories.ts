@@ -7,7 +7,7 @@ import {
 
 const getAllCategories = async (req: Request, res: Response) => {
   try {
-    const getCategories = await pool.query(`SELECT * FROM CATEGORY`);
+    const getCategories = await pool.query(`SELECT * FROM CATEGORIES`);
     res.json(getCategories.rows);
   } catch (error) {
     if (error instanceof Error) {
@@ -26,8 +26,8 @@ const addNewCategory = async (
   res: Response
 ) => {
   try {
-    const addCategory = `INSERT INTO CATEGORY (id, description) VALUES ($1, $2)`;
-    const values = [req.body.id, req.body.description];
+    const addCategory = `INSERT INTO CATEGORIES id VALUES $1`;
+    const values = [req.body.id];
     await pool.query(addCategory, values);
     res.json({ status: "ok", msg: "Category added" });
   } catch (error) {
@@ -45,7 +45,7 @@ const delCatagoryById = async (
   res: Response
 ) => {
     try {
-        await pool.query(`DELETE FROM CATEGORY WHERE id = $1`, [req.params.id])
+        await pool.query(`DELETE FROM CATEGORIES WHERE id = $1`, [req.params.id])
         res.json({ status: "ok", msg: "Category deleted" });
     } catch (error) {
         if (error instanceof Error) {

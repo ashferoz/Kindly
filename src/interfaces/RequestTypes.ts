@@ -1,14 +1,14 @@
 export interface AddRequestBody {
-  user_uuid: string;
+  beneficiary_uuid: string;
   title: string;
   details: string;
-  request_category: string;
-  request_urgency: string;
-  request_location: string;
+  category: string;
+  urgency: string;
+  location: string;
 }
 
 export interface GetRequestBody {
-  user_uuid: string;
+  beneficiary_uuid: string;
 }
 
 export interface DelRequestParams {
@@ -18,10 +18,10 @@ export interface DelRequestParams {
 export interface UpdateRequestBody {
   title?: string;
   details?: string;
-  request_category?: string;
-  request_urgency?: string;
-  request_location?: string;
-  request_status?: string;
+  category?: string;
+  urgency?: string;
+  location?: string;
+ status?: string;
 }
 
 export interface UpdateRequestParams {

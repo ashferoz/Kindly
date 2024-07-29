@@ -43,8 +43,8 @@ const addNewLocation = async (
   res: Response
 ) => {
   try {
-    const addLocation = `INSERT INTO LOCATIONS VALUES($1, $2)`;
-    const values = [req.body.id, req.body.description];
+    const addLocation = `INSERT INTO LOCATIONS VALUES $1`;
+    const values = [req.body.id];
 
     await pool.query(addLocation, values);
     res.json({ status: "ok", msg: "Location added" });
