@@ -16,6 +16,8 @@ router.patch("/requests/:request_id", auth, requestsController.updateRequestById
 
 router.put("/requests/:connect_request_id", auth, requestsController.connectToRequest);
 
-router.post("/requests/connected", auth, requestsController.getVolunteersConnectedRequests);
+router.post("/connected/volunteer", auth, requestsController.getVolunteersConnectedRequests);
+
+router.post("/connected/beneficiary", auth, requestsController.getBeneficiariesConnectedRequests);
 
 export default router;

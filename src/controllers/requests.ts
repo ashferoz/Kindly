@@ -188,12 +188,37 @@ const getVolunteersConnectedRequests = async (
   try {
     const allRequests = await pool.query(
       `SELECT cu.*, r.*, u.username AS beneficiary_username
-      FROM connect_users cu
-      JOIN requests r ON cu.request_id = r.id 
-      JOIN users u ON r.beneficiary_uuid = u.uuid
-      WHERE cu.volunteer_uuid = $1`,
+     FROM connect_users cu
+     JOIN requests r ON cu.request_id = r.id 
+     JOIN users u ON r.beneficiary_uuid = u.uuid
+     WHERE cu.volunteer_uuid = $1`,
       [req.body.volunteer_uuid]
     );
+    res.json(allRequests.rows);
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error.message);
+      res.status(400).json({ status: "error", msg: "Error getting connected requests" });
+    } else {
+      console.error("An unexpected error occurred:", error);
+    }
+  }
+};
+
+const getBeneficiariesConnectedRequests = async (
+  req: Request, 
+  res: Response
+) => {
+  try {
+    const allRequests = await pool.query(
+      `SELECT cu.*, r.*, u.username AS volunteer_username
+       FROM connect_users cu
+       JOIN requests r ON cu.request_id = r.id 
+       JOIN users u ON cu.volunteer_uuid = u.uuid
+       WHERE cu.beneficiary_uuid = $1`,
+      [req.body.beneficiary_uuid]
+    );
+
     res.json(allRequests.rows);
   } catch (error) {
     if (error instanceof Error) {
@@ -214,4 +239,5 @@ export default {
   updateRequestById,
   connectToRequest,
   getVolunteersConnectedRequests,
+  getBeneficiariesConnectedRequests
 };
