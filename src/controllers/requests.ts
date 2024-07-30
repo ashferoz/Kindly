@@ -213,7 +213,7 @@ const getBeneficiariesConnectedRequests = async (
 ) => {
   try {
     const allRequests = await pool.query(
-      `SELECT cu.id AS connection_id, cu.*, r.*, u.username AS volunteer_username
+      `SELECT cu.id AS connection_id, cu.*, r.*, u.username AS volunteer_username, u.bio AS bio
       FROM connect_users cu
       JOIN requests r ON cu.request_id = r.id 
       JOIN users u ON cu.volunteer_uuid = u.uuid

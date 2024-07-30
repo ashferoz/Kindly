@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.get("/", usersController.getAllUsers);
 
-router.delete("/", auth, usersController.deleteOneUserByUUID)
+router.delete("/", usersController.deleteOneUserByUUID)
 
 router.patch("/", auth, usersController.updateUserByUUID)
 

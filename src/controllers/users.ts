@@ -1,9 +1,11 @@
-import { Response, Request } from "express";
+import { Response } from "express";
 import pool from "../db/db";
-import {
-  DelRequestBody,
-  UpdateUserBody,
-} from "../interfaces/UsersTypes";
+import { DelRequestBody, UpdateUserBody } from "../interfaces/UsersTypes";
+
+interface Request {
+  decoded?: any;
+  body: any;
+}
 
 const getAllUsers = async (req: Request, res: Response) => {
   try {
@@ -21,24 +23,25 @@ const getAllUsers = async (req: Request, res: Response) => {
 
 const getUserByUUID = async (req: Request, res: Response) => {
   try {
-    const userDetails = await pool.query(`SELECT * FROM users WHERE uuid= $1`, [req.body.uuid])
-    res.json(userDetails.rows)
+    const userDetails = await pool.query(`SELECT * FROM users WHERE uuid= $1`, [
+      req.decoded.uuid,
+    ]);
+    res.json(userDetails.rows);
   } catch (error) {
     if (error instanceof Error) {
       console.error(error.message);
-      res.status(400).json({ status: "error", msg: "error getting user's info" });
+      res
+        .status(400)
+        .json({ status: "error", msg: "error getting user's info" });
     } else {
       console.error("An unexpected error occurred:", error);
     }
   }
-}
+};
 
-const deleteOneUserByUUID = async (
-  req: Request<{}, {}, DelRequestBody>,
-  res: Response
-) => {
+const deleteOneUserByUUID = async (req: Request, res: Response) => {
   try {
-    await pool.query(`DELETE FROM users WHERE uuid = $1`, [req.body.uuid]);
+    await pool.query(`DELETE FROM users WHERE uuid = $1`, [req.decoded.uuid]);
     res.json({ status: "ok", msg: "User deleted" });
   } catch (error) {
     if (error instanceof Error) {
@@ -50,11 +53,7 @@ const deleteOneUserByUUID = async (
   }
 };
 
-
-const updateUserByUUID = async (
-  req: Request<{}, {}, UpdateUserBody>,
-  res: Response
-) => {
+const updateUserByUUID = async (req: Request, res: Response) => {
   try {
     const setClause = [];
     const values = [];
@@ -92,7 +91,7 @@ const updateUserByUUID = async (
     const updateUser = `UPDATE users SET ${setClause.join(
       ", "
     )} WHERE uuid = $${values.length + 1}`;
-    values.push(req.body.uuid);
+    values.push(req.decoded.uuid);
 
     await pool.query(updateUser, values);
 
@@ -107,4 +106,9 @@ const updateUserByUUID = async (
   }
 };
 
-export default { getAllUsers, deleteOneUserByUUID, updateUserByUUID, getUserByUUID };
+export default {
+  getAllUsers,
+  deleteOneUserByUUID,
+  updateUserByUUID,
+  getUserByUUID,
+};
