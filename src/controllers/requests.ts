@@ -13,7 +13,9 @@ import {
 const getAllRequests = async (req: Request, res: Response) => {
   try {
     const allRequests = await pool.query(`
-     SELECT * FROM requests`);
+      SELECT r.*, u.username AS username
+      FROM requests r
+      JOIN users u ON r.beneficiary_uuid = u.uuid`);
     res.json(allRequests.rows);
   } catch (error) {
     if (error instanceof Error) {
@@ -159,15 +161,15 @@ const connectToRequest = async (
   try {
     const checkConnection = await pool.query(
       "SELECT 1 FROM connect_users WHERE volunteer_uuid = $1 AND request_id = $2",
-      [req.body.volunteer_uuid, req.params.connect_request_id] 
+      [req.body.volunteer_uuid, req.params.request_id] 
     );
 
     if (checkConnection.rows.length > 0) { 
       return res.status(400).json({ status: "error", msg: "Already connected to this request" });
     }
 
-    const connectRequest = `INSERT INTO connect_users (volunteer_uuid, request_id) VALUES($1, $2)`;
-    const values = [req.body.volunteer_uuid, req.params.connect_request_id];
+    const connectRequest = `INSERT INTO connect_users (volunteer_uuid, request_id, beneficiary_uuid) VALUES($1, $2, $3)`;
+    const values = [req.body.volunteer_uuid, req.params.request_id, req.body.beneficiary_uuid];
     await pool.query(connectRequest, values);
     res.json({ status: "ok", msg: "User is connected" });
   } catch (error) {
@@ -230,6 +232,22 @@ const getBeneficiariesConnectedRequests = async (
   }
 };
 
+const deleteConnectionById = async (req: Request, res: Response) => {
+  try {
+    await pool.query(`DELETE FROM connect_users WHERE id = $1`, [
+      req.params.id,
+    ]);
+    res.json({ status: "ok", msg: "Request deleted" });
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error.message);
+      res.status(400).json({ status: "error", msg: "Error deleting connection" });
+    } else {
+      console.error("An unexpected error occurred:", error);
+    }
+  }
+}
+
 
 export default {
   getAllRequests,
@@ -239,5 +257,6 @@ export default {
   updateRequestById,
   connectToRequest,
   getVolunteersConnectedRequests,
-  getBeneficiariesConnectedRequests
+  getBeneficiariesConnectedRequests,
+  deleteConnectionById
 };

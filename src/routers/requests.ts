@@ -14,10 +14,12 @@ router.delete("/requests/:request_id", auth, requestsController.deleteOneRequest
 
 router.patch("/requests/:request_id", auth, requestsController.updateRequestById);
 
-router.put("/requests/:connect_request_id", auth, requestsController.connectToRequest);
+router.put("/requests/:request_id", auth, requestsController.connectToRequest);
 
 router.post("/connected/volunteer", auth, requestsController.getVolunteersConnectedRequests);
 
 router.post("/connected/beneficiary", auth, requestsController.getBeneficiariesConnectedRequests);
+
+router.delete('/connection/:id', auth, requestsController.deleteConnectionById)
 
 export default router;
