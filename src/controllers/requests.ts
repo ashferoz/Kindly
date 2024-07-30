@@ -189,7 +189,7 @@ const getVolunteersConnectedRequests = async (
 ) => {
   try {
     const allRequests = await pool.query(
-      `SELECT cu.*, r.*, u.username AS beneficiary_username
+      `SELECT cu.id AS connection_id, cu.*, r.*, u.username AS beneficiary_username
      FROM connect_users cu
      JOIN requests r ON cu.request_id = r.id 
      JOIN users u ON r.beneficiary_uuid = u.uuid
@@ -213,11 +213,11 @@ const getBeneficiariesConnectedRequests = async (
 ) => {
   try {
     const allRequests = await pool.query(
-      `SELECT cu.*, r.*, u.username AS volunteer_username, u.bio AS bio
-       FROM connect_users cu
-       JOIN requests r ON cu.request_id = r.id 
-       JOIN users u ON cu.volunteer_uuid = u.uuid
-       WHERE cu.beneficiary_uuid = $1`,
+      `SELECT cu.id AS connection_id, cu.*, r.*, u.username AS volunteer_username
+      FROM connect_users cu
+      JOIN requests r ON cu.request_id = r.id 
+      JOIN users u ON cu.volunteer_uuid = u.uuid
+      WHERE cu.beneficiary_uuid = $1;`,
       [req.body.beneficiary_uuid]
     );
 
@@ -235,7 +235,7 @@ const getBeneficiariesConnectedRequests = async (
 const deleteConnectionById = async (req: Request, res: Response) => {
   try {
     await pool.query(`DELETE FROM connect_users WHERE id = $1`, [
-      req.params.id,
+      req.params.connection_id,
     ]);
     res.json({ status: "ok", msg: "Request deleted" });
   } catch (error) {

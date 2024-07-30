@@ -20,6 +20,6 @@ router.post("/connected/volunteer", auth, requestsController.getVolunteersConnec
 
 router.post("/connected/beneficiary", auth, requestsController.getBeneficiariesConnectedRequests);
 
-router.delete('/connection/:id', auth, requestsController.deleteConnectionById)
+router.delete('/connection/:connection_id', auth, requestsController.deleteConnectionById)
 
 export default router;
