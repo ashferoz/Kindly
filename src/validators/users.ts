@@ -1,7 +1,7 @@
 import { body } from "express-validator";
 
 export const validateUserUpdateRequest = [
-  body("user_uuid", "user uuid is required").notEmpty(),
+  body("uuid", "user uuid is required").notEmpty(),
   body("first_name", "first name is requried").optional().notEmpty().trim(),
   body("first_name", "firstname must have length between 1 and 50 characters")
     .optional()

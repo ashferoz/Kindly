@@ -1,13 +1,13 @@
 import { body, param } from "express-validator";
 
 export const validateAddRequest = [
-  body("user_uuid", "user uuid is required").notEmpty(),
+  body("beneficiary_uuid", "user uuid is required").notEmpty(),
   body("title", "title is required").notEmpty(),
   body("title", "title must have length between 1 and 50 characters").isLength({
     min: 1,
     max: 50,
   }),
-  body("details", "detail is required").notEmpty(),
+  body("details", "detail is required").optional().notEmpty(),
   body("category", "category is required").notEmpty(),
   body("urgency", "urgency is required").notEmpty(),
   body("location", "location is required").notEmpty(),
