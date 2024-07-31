@@ -35,7 +35,7 @@ export const validateRegistrationData = [
 ];
 
 export const validateLoginData = [
-  body("email", "valid email is requried").notEmpty().isEmail(),
+  body("username", "valid username is requried").notEmpty(),
   body("password", "password is requried").notEmpty(),
 ];
 
