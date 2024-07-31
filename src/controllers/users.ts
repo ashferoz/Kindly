@@ -41,7 +41,7 @@ const getUserByUUID = async (req: Request, res: Response) => {
 
 const deleteOneUserByUUID = async (req: Request, res: Response) => {
   try {
-    await pool.query(`DELETE FROM users WHERE uuid = $1`, [req.decoded.uuid]);
+    await pool.query(`DELETE FROM users WHERE uuid = $1`, [req.body.uuid]);
     res.json({ status: "ok", msg: "User deleted" });
   } catch (error) {
     if (error instanceof Error) {
