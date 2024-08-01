@@ -69,6 +69,9 @@ Beneficiary profile page.
 - Create admin role features and interface.
 - Beneficiaries can tip volunteers.
 - Beneficiaries can also help out with requests, forming a circle of kindness.
+- Have a preset image based on beneficiaries request type.
+- Volunteers can put up items for donations.
+- Volunteers can upload image of donations.
 
 ## Technology used
 
